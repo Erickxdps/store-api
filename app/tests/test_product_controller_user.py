@@ -1,3 +1,6 @@
+from app.models.producto_model import Producto
+
+
 def test_get_products_as_user(test_client, user_auth_headers):
     # El usuario con el rol de "user" debería poder obtener la lista de productos
     response = test_client.get("/api/products", headers=user_auth_headers)
@@ -13,15 +16,17 @@ def test_create_product_as_user(test_client, user_auth_headers):
 
 
 def test_get_product_as_user(test_client, user_auth_headers):
-    # El usuario con el rol de "user" debería poder obtener un producto específico
-    # Este test asume que existe al menos un producto en la base de datos
-    response = test_client.get("/api/products/1", headers=user_auth_headers)
+    # Crear un producto antes de intentar obtenerlo
+    new_product = Producto(name="Producto de prueba", description="Descripción de prueba", price=10.0, stock=5)
+    new_product.save()
+
+    # Ahora intenta obtener el producto
+    response = test_client.get(f"/api/products/{new_product.id}", headers=user_auth_headers)
     assert response.status_code == 200
     assert "name" in response.json
     assert "description" in response.json
     assert "price" in response.json
     assert "stock" in response.json
-
 
 def test_update_product_as_user(test_client, user_auth_headers):
     # El usuario con el rol de "user" no debería poder actualizar un producto
