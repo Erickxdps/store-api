@@ -68,6 +68,7 @@ def delete_producto(id):
 
     if not producto:
         return jsonify({"error": "Producto no encontrado"}), 404
+    
     producto.delete()
     
     return "", 204
